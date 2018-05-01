@@ -11,4 +11,5 @@ public interface CategoryService {
 
     List<CategoryView> getCategories();
 
+    boolean deleteCategory(Long categoryId);
 }

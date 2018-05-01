@@ -13,6 +13,8 @@ public class CreateCategoryRequest {
 
     String name;
 
+    String description;
+
     Long userId;
 
 }

@@ -9,5 +9,5 @@ create table questions.question (
   id bigserial primary key,
   question text not null,
   answer text not null,
-  category_id bigint not null references questions.category(id)
+  category_id bigint not null references questions.category(id) ON DELETE CASCADE
 );

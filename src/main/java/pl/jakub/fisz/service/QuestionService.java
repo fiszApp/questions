@@ -13,4 +13,6 @@ public interface QuestionService {
 
     List<QuestionView> getQuestionByCategory(Long categoryId);
 
+    boolean deleteQuestion(Long id);
+
 }

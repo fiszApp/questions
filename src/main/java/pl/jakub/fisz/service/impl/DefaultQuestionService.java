@@ -3,6 +3,7 @@ package pl.jakub.fisz.service.impl;
 import com.google.common.collect.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.jakub.fisz.api.request.CreateQuestionRequest;
 import pl.jakub.fisz.api.response.QuestionView;
 import pl.jakub.fisz.data.Category;
@@ -13,6 +14,7 @@ import pl.jakub.fisz.service.QuestionService;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -25,6 +27,7 @@ public class DefaultQuestionService implements QuestionService {
     private CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public QuestionView saveQuestion(CreateQuestionRequest createQuestionRequest) {
 
         Category category = categoryRepository.findOne(createQuestionRequest.getCategoryId());
@@ -38,6 +41,7 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<QuestionView> getQuestions() {
         return Streams.stream(questionRepository.findAll())
                 .map(QuestionView::from)
@@ -45,11 +49,22 @@ public class DefaultQuestionService implements QuestionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<QuestionView> getQuestionByCategory(Long categoryId) {
         Category category = categoryRepository.findOne(categoryId);
 
         return questionRepository.findByCategory(category).stream()
                 .map(QuestionView::from)
                 .collect(toList());
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteQuestion(Long id) {
+        if (isNull(questionRepository.findOne(id))) {
+            return false;
+        }
+        questionRepository.delete(id);
+        return true;
     }
 }
