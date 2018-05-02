@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.jakub.fisz.api.request.CreateQuestionRequest;
+import pl.jakub.fisz.api.request.EditQuestionRequest;
 import pl.jakub.fisz.api.response.QuestionView;
 import pl.jakub.fisz.data.Category;
 import pl.jakub.fisz.data.Question;
@@ -66,5 +67,33 @@ public class DefaultQuestionService implements QuestionService {
         }
         questionRepository.delete(id);
         return true;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public QuestionView getQuestion(Long id) {
+        return QuestionView.from(questionRepository.findOne(id));
+    }
+
+    @Override
+    @Transactional
+    public boolean editQuestion(Long id, EditQuestionRequest request) {
+        Question question = questionRepository.findOne(id);
+
+        if (isNull(question)) {
+            return false;
+        }
+
+        editQuestion(request, question);
+        questionRepository.save(question);
+        return true;
+    }
+
+    private void editQuestion(EditQuestionRequest request, Question question) {
+        question.setAnswer(request.getAnswer());
+        question.setQuestion(request.getQuestion());
+
+        Category category = categoryRepository.findOne(request.getCategoryId());
+        question.setCategory(category);
     }
 }

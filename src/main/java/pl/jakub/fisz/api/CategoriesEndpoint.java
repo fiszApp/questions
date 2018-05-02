@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.jakub.fisz.api.request.CreateCategoryRequest;
+import pl.jakub.fisz.api.request.EditCategoryRequest;
 import pl.jakub.fisz.api.response.CategoryView;
 import pl.jakub.fisz.service.CategoryService;
 
@@ -33,6 +34,21 @@ public class CategoriesEndpoint {
     public List<CategoryView> getCategories() {
         log.info("Getting all categories.");
         return categoryService.getCategories();
+    }
+
+    @GetMapping(value = "/{id}",
+            produces = APPLICATION_JSON_VALUE)
+    public CategoryView getCategory(@PathVariable("id") Long categoryId) {
+        log.info("Getting category with id {}.", categoryId);
+        return categoryService.getCategory(categoryId);
+    }
+
+    @PutMapping(value = "/{id}",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
+    public boolean editCategory(@PathVariable("id") Long categoryId, @RequestBody EditCategoryRequest request) {
+        log.info("Editing category with id {} with request {}.", categoryId, request);
+        return categoryService.editCategory(categoryId, request);
     }
 
     @DeleteMapping(value = "/{id}")

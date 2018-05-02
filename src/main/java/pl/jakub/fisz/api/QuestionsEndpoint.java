@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.jakub.fisz.api.request.CreateQuestionRequest;
+import pl.jakub.fisz.api.request.EditQuestionRequest;
 import pl.jakub.fisz.api.response.QuestionView;
 import pl.jakub.fisz.service.QuestionService;
 
@@ -35,7 +36,7 @@ public class QuestionsEndpoint {
         return questionService.getQuestions();
     }
 
-    @GetMapping(value = "/{id}",
+    @GetMapping(value = "byCategory/{id}",
             produces = APPLICATION_JSON_VALUE)
     public List<QuestionView> getQuestionsByCategory(@PathVariable("id") Long categoryId) {
         log.info("Getting questions with category {}.", categoryId);
@@ -48,5 +49,19 @@ public class QuestionsEndpoint {
         return questionService.deleteQuestion(questionId);
     }
 
+    @GetMapping(value = "/{id}",
+            produces = APPLICATION_JSON_VALUE)
+    public QuestionView getQuestion(@PathVariable("id") Long id) {
+        log.info("Getting question with id {}.", id);
+        return questionService.getQuestion(id);
+    }
+
+    @PutMapping(value = "/{id}",
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
+    public boolean editQuestion(@PathVariable("id") Long questionId, @RequestBody EditQuestionRequest editQuestionRequest) {
+        log.info("Editing questions with id {} and request.", questionId, editQuestionRequest);
+        return questionService.editQuestion(questionId, editQuestionRequest);
+    }
 
 }
